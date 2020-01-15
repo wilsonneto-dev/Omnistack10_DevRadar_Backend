@@ -2,11 +2,14 @@ import express from 'express';
 import cors from 'cors';
 
 import routes from './routes';
+import IController from 'app/interfaces/IController';
 
 class Server {
   private app: express.Express;
+  private controllers: [IController];
 
-  constructor() {
+  constructor(pControllers: [IController]) {
+    this.controllers = pControllers;
     this.app = express();
   }
 
@@ -16,6 +19,10 @@ class Server {
 
   private routes(): void {
     this.app.use(routes);
+
+    this.controllers.forEach((controller: IController) => {
+      this.app.use(controller.router);
+    });
   }
 
   public startup(): void {
