@@ -1,7 +1,8 @@
 Setup:
 
--> npm i express doteenv cors mongoose
--> npm i -D eslint prettier typescript sucrase @types/express @types/cors commitizen nodemon 
+-> npm i express dotenv cors mongoose
+-> npm i -D eslint prettier typescript sucrase commitizen nodemon 
+-> npm i -D @types/express @types/cors @types/mongoose
 [** sucrase ou ts-node..]
 
 -> * add: .gitignore
