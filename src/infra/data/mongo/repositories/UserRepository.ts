@@ -5,7 +5,11 @@ import UserCollection from '../collections/UserCollection';
 
 class UserRepository implements IUserRepository {
   async store(user: User): Promise<User> {
-    return await (<User>UserCollection.create(user));
+    return <User>await UserCollection.create(user);
+  }
+
+  async getById(id: string): Promise<User> {
+    return <User>await UserCollection.findById(id);
   }
 }
 

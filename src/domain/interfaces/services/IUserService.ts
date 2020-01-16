@@ -1,7 +1,8 @@
 import User from '../../entities/User';
 
 interface IUserService {
-  store(user: User): User;
+  store(user: User): Promise<User>;
+  getById(id: string): Promise<User>;
 }
 
 export default IUserService;

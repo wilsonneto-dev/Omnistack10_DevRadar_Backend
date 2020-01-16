@@ -23,6 +23,7 @@ class DevsController implements IController {
 
   private initializeRoutes(): void {
     this.router.post(this.path, this.store.bind(this));
+    this.router.get(`${this.path}/:id`, this.getById.bind(this));
   }
 
   private error(statusCode: number, error: string, res: Response): void {
@@ -59,9 +60,21 @@ class DevsController implements IController {
     user.name = data.name || data.github_username;
     user.techs = techs.split(',').map((tech: string) => tech.trim());
 
-    const ok = this._userService.store(user);
+    const ok = await this._userService.store(user);
 
     res.status(200).json(ok);
+  }
+
+  private async getById(req: Request, res: Response): Promise<void> {
+    try {
+      const id: string = req.params?.id;
+      if (!id) this.error(422, 'Invalid entries', res);
+
+      const user = await this._userService.getById(id);
+      res.json(user);
+    } catch (err) {
+      res.status(422).json(err);
+    }
   }
 }
 

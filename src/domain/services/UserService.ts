@@ -9,8 +9,12 @@ class UserService implements IUserService {
     this._userRepository = _userRepository;
   }
 
-  public store(user: User): User {
+  public async store(user: User): Promise<User> {
     return this._userRepository.store(user);
+  }
+
+  public async getById(id: string): Promise<User> {
+    return this._userRepository.getById(id);
   }
 }
 
