@@ -8,8 +8,16 @@ class UserRepository implements IUserRepository {
     return <User>await UserCollection.create(user);
   }
 
-  async getById(id: string): Promise<User> {
-    return <User>await UserCollection.findById(id);
+  async getById(id: string): Promise<User | null> {
+    return <User | null>await UserCollection.findById(id);
+  }
+
+  async getByUser(username: string): Promise<User | null> {
+    return <User | null>await UserCollection.findOne({ github_name: username });
+  }
+
+  async getAll(): Promise<Array<User>> {
+    return <Array<User>>await UserCollection.find();
   }
 }
 

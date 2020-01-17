@@ -24,6 +24,8 @@ class DevsController implements IController {
   private initializeRoutes(): void {
     this.router.post(this.path, this.store.bind(this));
     this.router.get(`${this.path}/:id`, this.getById.bind(this));
+    this.router.get(`${this.path}/u/:username`, this.getByUser.bind(this));
+    this.router.get(this.path, this.getAll.bind(this));
   }
 
   private error(statusCode: number, error: string, res: Response): void {
@@ -60,9 +62,9 @@ class DevsController implements IController {
     user.name = data.name || data.github_username;
     user.techs = techs.split(',').map((tech: string) => tech.trim());
 
-    const ok = await this._userService.store(user);
+    const registeredUser = await this._userService.store(user);
 
-    res.status(200).json(ok);
+    res.status(200).json(registeredUser);
   }
 
   private async getById(req: Request, res: Response): Promise<void> {
@@ -72,6 +74,34 @@ class DevsController implements IController {
 
       const user = await this._userService.getById(id);
       res.json(user);
+    } catch (err) {
+      res.status(422).json(err);
+    }
+  }
+
+  private async getByUser(req: Request, res: Response): Promise<void> {
+    try {
+      const username: string = req.params.username || '';
+      if (!username || username.trim() == '') {
+        this.error(422, 'Username parameter is required', res);
+      }
+
+      const user: User | null = await this._userService.getByUser(username);
+      if (!user) {
+        res.status(404).json({ success: true, message: 'no results' });
+        return;
+      }
+
+      res.json(user);
+    } catch (err) {
+      res.status(422).json(err);
+    }
+  }
+
+  private async getAll(_req: Request, res: Response): Promise<void> {
+    try {
+      const list = await this._userService.getAll();
+      res.json(list);
     } catch (err) {
       res.status(422).json(err);
     }
