@@ -1,3 +1,5 @@
+import Location from './Location';
+
 class User {
   id?: number;
   name?: String;
@@ -5,6 +7,8 @@ class User {
   github_name?: String;
   bio?: String;
   techs?: Array<string>;
+
+  location?: Location;
 
   constructor() {}
 }

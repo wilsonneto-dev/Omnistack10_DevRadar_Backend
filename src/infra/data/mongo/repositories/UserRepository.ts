@@ -2,14 +2,19 @@ import IUserRepository from 'domain/interfaces/repositories/IUserRepository';
 import User from 'domain/entities/User';
 
 import UserCollection from '../collections/UserCollection';
+import mapper from '../mappers/UserMapper';
 
 class UserRepository implements IUserRepository {
-  async store(user: User): Promise<User> {
-    return <User>await UserCollection.create(user);
+  async store(user: User): Promise<User | null> {
+    const userOnSchema: any = mapper.toSchema(user);
+    const savedSchema: any = await UserCollection.create(userOnSchema);
+
+    return mapper.toUser(savedSchema);
   }
 
   async getById(id: string): Promise<User | null> {
-    return <User | null>await UserCollection.findById(id);
+    const resultSchema = await UserCollection.findById(id);
+    return mapper.toUser(resultSchema);
   }
 
   async getByUser(username: string): Promise<User | null> {

@@ -4,6 +4,8 @@ import IController from '../interfaces/IController';
 import axios, { AxiosResponse } from 'axios';
 
 import User from '../../domain/entities/User';
+import Location from '../../domain/entities/Location';
+
 import IUserService from '../../domain/interfaces/services/IUserService';
 
 // que seriam por injeção de dependencia
@@ -38,8 +40,10 @@ class DevsController implements IController {
   private async store(req: Request, res: Response): Promise<void> {
     const github_username: string = req.body?.github_username;
     const techs: string = req.body?.techs;
+    const longitude: number = req.body?.longitude;
+    const latitude: number = req.body?.latitude;
 
-    if (!github_username || !techs)
+    if (!github_username || !techs || !latitude || !longitude)
       return this.error(422, 'Invalid entries', res);
 
     const githubResponse: AxiosResponse = await axios
@@ -61,6 +65,10 @@ class DevsController implements IController {
     user.github_name = github_username;
     user.name = data.name || data.github_username;
     user.techs = techs.split(',').map((tech: string) => tech.trim());
+
+    user.location = new Location();
+    user.location.latitude = latitude;
+    user.location.longitude = longitude;
 
     const registeredUser = await this._userService.store(user);
 
