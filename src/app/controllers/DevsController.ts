@@ -46,6 +46,18 @@ class DevsController implements IController {
     if (!github_username || !techs || !latitude || !longitude)
       return this.error(422, 'Invalid entries', res);
 
+    const userVerify: User | null = await this._userService.getByUser(
+      github_username,
+    );
+
+    if (userVerify) {
+      return this.error(
+        409,
+        `User ${github_username} already registered...`,
+        res,
+      );
+    }
+
     const githubResponse: AxiosResponse = await axios
       .create({
         validateStatus: function() {

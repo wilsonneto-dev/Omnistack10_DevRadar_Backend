@@ -10,9 +10,9 @@ import db from '../../infra/data/mongo/db';
 
 class Server {
   private app: express.Express;
-  private controllers: [IController];
+  private controllers: Array<IController>;
 
-  constructor(pControllers: [IController]) {
+  constructor(pControllers: Array<IController>) {
     this.controllers = pControllers;
     this.app = express();
   }
