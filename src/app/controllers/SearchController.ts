@@ -1,18 +1,20 @@
 import { Router, Response, Request } from 'express';
 
-import IController from 'app/interfaces/IController';
-// import IUserService from 'domain/interfaces/services/IUserService';
-// import UserService from 'domain/services/UserService';
-// import UserRepository from 'infra/data/mongo/repositories/UserRepository';
+import IController from '../../app/interfaces/IController';
+import IUserService from '../../domain/interfaces/services/IUserService';
+import UserService from '../../domain/services/UserService';
+import UserRepository from '../../infra/data/mongo/repositories/UserRepository';
+
+import Location from '../../domain/entities/Location';
 
 class SearchController implements IController {
   public path: string = '/search';
   public router: Router = Router();
 
-  // private _userService: IUserService;
+  private _userService: IUserService;
 
   constructor() {
-    // this._userService = new UserService(new UserRepository());
+    this._userService = new UserService(new UserRepository());
     this.initializeRoutes();
   }
 
@@ -36,7 +38,15 @@ class SearchController implements IController {
       );
     }
 
-    res.json({ message: "thats ok, i'm running fine man!" });
+    const { latitude, longitude, techs } = req.query;
+    const arrTechs = techs.split(',').map((item: string) => item.trim());
+    const location: Location = new Location();
+    location.latitude = latitude;
+    location.longitude = longitude;
+
+    const users = await this._userService.search(arrTechs, location);
+
+    res.json({ users, arrTechs });
   }
 }
 

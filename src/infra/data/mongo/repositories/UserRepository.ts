@@ -1,5 +1,6 @@
 import IUserRepository from 'domain/interfaces/repositories/IUserRepository';
 import User from 'domain/entities/User';
+import Location from 'domain/entities/Location';
 
 import UserCollection from '../collections/UserCollection';
 import mapper from '../mappers/UserMapper';
@@ -23,6 +24,26 @@ class UserRepository implements IUserRepository {
 
   async getAll(): Promise<Array<User>> {
     return <Array<User>>await UserCollection.find();
+  }
+
+  async search(
+    arrTechs: Array<string>,
+    location: Location,
+  ): Promise<Array<User>> {
+    return <Array<User>>await UserCollection.find({
+      techs: {
+        $in: arrTechs,
+      },
+      location: {
+        $near: {
+          $geometry: {
+            type: 'Point',
+            coordinates: [location.longitude, location.latitude],
+          },
+          $maxDistance: 10000,
+        },
+      },
+    });
   }
 }
 
